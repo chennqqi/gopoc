@@ -3,9 +3,7 @@ package lib
 import (
 	"fmt"
 	"gopoc/utils"
-	"math/rand"
 	"net/http"
-	"net/url"
 	"regexp"
 	"sort"
 	"strings"
@@ -13,23 +11,9 @@ import (
 	"time"
 )
 
-var (
-	ceyeApi    string
-	ceyeDomain string
-)
-
 type Task struct {
 	Req *http.Request
 	Poc *Poc
-}
-
-func InitCeyeApi(api, domain string) bool {
-	if api == "" || domain == "" || !strings.HasSuffix(domain, ".ceye.io") {
-		return false
-	}
-	ceyeApi = api
-	ceyeDomain = domain
-	return true
 }
 
 func checkVul(tasks []Task, ticker *time.Ticker) <-chan Task {
@@ -293,21 +277,4 @@ func doSearch(re string, body string) map[string]string {
 		return paramsMap
 	}
 	return nil
-}
-
-func newReverse() *Reverse {
-	letters := "1234567890abcdefghijklmnopqrstuvwxyz"
-	randSource := rand.New(rand.NewSource(time.Now().Unix()))
-	sub := utils.RandomStr(randSource, letters, 8)
-	if ceyeDomain == "" {
-		return &Reverse{}
-	}
-	urlStr := fmt.Sprintf("http://%s.%s", sub, ceyeDomain)
-	u, _ := url.Parse(urlStr)
-	return &Reverse{
-		Url:                ParseUrl(u),
-		Domain:             u.Hostname(),
-		Ip:                 "",
-		IsDomainNameServer: false,
-	}
 }

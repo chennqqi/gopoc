@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/urfave/cli/v2"
 	"gopoc/lib"
 	"gopoc/utils"
 	"io/ioutil"
@@ -13,6 +12,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/urfave/cli/v2"
 )
 
 var (
@@ -29,8 +30,8 @@ var (
 	verbose    bool
 	debug      bool
 	forceSSL   bool
-	apiKey     string
-	ceyeDomain string
+
+	reverse string
 )
 
 func Execute() {
@@ -39,8 +40,7 @@ func Execute() {
 		Usage:   "A poc framework written in golang",
 		Version: "1.0.0",
 		Flags: []cli.Flag{
-			&cli.StringFlag{Name: "apiKey", Aliases: []string{"k"}, Destination: &apiKey, Value: "", Usage: "ceye.io api key"},
-			&cli.StringFlag{Name: "domain", Destination: &ceyeDomain, Value: "", Usage: "ceye.io subdomain"},
+			&cli.StringFlag{Name: "reverse", Aliases: []string{"e"}, Destination: &reverse, Value: "", Usage: "set reverse URI, eg: ceye://ceye.io?api=xxxxx, godnslog://godnslog.com?secret=xxxx"},
 			&cli.BoolFlag{Name: "debug", Aliases: []string{"d"}, Destination: &debug, Value: false, Usage: "log level debug"},
 			&cli.BoolFlag{Name: "info", Aliases: []string{"i"}, Destination: &verbose, Value: false, Usage: "log level info"},
 			&cli.StringFlag{Name: "poc-name", Aliases: []string{"p"}, Destination: &pocName, Value: "", Usage: "single poc `NAME`"},
@@ -61,8 +61,9 @@ func Execute() {
 				return err
 			}
 			utils.InitLog(debug, verbose)
-			if !lib.InitCeyeApi(apiKey, ceyeDomain) {
-				utils.Warning("no api")
+
+			if !lib.InitReverse(reverse) {
+				utils.Warning("no dnslog service set")
 			}
 			switch {
 			case target != "":

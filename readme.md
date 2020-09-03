@@ -1,4 +1,6 @@
-# Chinese
+## gopoc
+
+## Chinese
 [xray](https://github.com/chaitin/xray) 提供了很多优秀简洁直观的POC，但是xray并不开源，无法进行二次开发改造。
 
 于是根据xray文档中的检测poc的思路，用[cel-go](https://github.com/google/cel-go) 写了个轮子，方便批量检测。
@@ -34,7 +36,11 @@ gopoc -l urls.txt -P "pocs/*"
 
 使用`-h`查看所有参数
 
-# English (by google)
+## 更新历史
+
+2020/09/03 同时支持godnslog和ceye两个dnslog平台，通过reverse参数配置
+
+## English (by google)
 [xray](https://github.com/chaitin/xray) provides many excellent concise and intuitive POC, but xray is not open source and cannot be redeveloped.
 
 So according to the idea of detecting poc in the chaitin xray document, I wrote a wheel with [cel-go](https://github.com/google/cel-go) to facilitate batch detection.

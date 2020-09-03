@@ -5,19 +5,19 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"fmt"
+	"gopoc/utils"
+	"math/rand"
+	"net/url"
+	"regexp"
+	"strings"
+	"time"
+
 	"github.com/google/cel-go/cel"
 	"github.com/google/cel-go/checker/decls"
 	"github.com/google/cel-go/common/types"
 	"github.com/google/cel-go/common/types/ref"
 	"github.com/google/cel-go/interpreter/functions"
 	exprpb "google.golang.org/genproto/googleapis/api/expr/v1alpha1"
-	"gopoc/utils"
-	"math/rand"
-	"net/http"
-	"net/url"
-	"regexp"
-	"strings"
-	"time"
 )
 
 func NewEnv(c *CustomLib) (*cel.Env, error) {
@@ -405,25 +405,4 @@ func randomLowercase(n int) string {
 	lowercase := "abcdefghijklmnopqrstuvwxyz"
 	randSource := rand.New(rand.NewSource(time.Now().Unix()))
 	return utils.RandomStr(randSource, lowercase, n)
-}
-
-func reverseCheck(r *Reverse, timeout int64) bool {
-	if ceyeApi == "" || r.Domain == "" {
-		return false
-	}
-	time.Sleep(time.Second * time.Duration(timeout))
-	sub := strings.Split(r.Domain, ".")[0]
-	urlStr := fmt.Sprintf("http://api.ceye.io/v1/records?token=%s&type=dns&filter=%s", ceyeApi, sub)
-	utils.Info(urlStr)
-	req, _ := http.NewRequest("GET", urlStr, nil)
-	resp, err := DoRequest(req, false)
-	if err != nil {
-		utils.Error(err)
-		return false
-	}
-	//fmt.Println(string(resp.Body))
-	if !bytes.Contains(resp.Body, []byte(`"data": []`)) { // api返回结果不为空
-		return true
-	}
-	return false
 }
